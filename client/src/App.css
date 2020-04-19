@@ -1,0 +1,38 @@
+.App {
+  text-align: center;
+  background-color: black;
+}
+
+.board-row {
+  width: 100%;
+  display:block;
+  margin: auto;
+  margin-bottom: -5px;
+}
+
+.dark-square {
+  height: 60px;
+  width: 60px;
+  display: inline-block;
+  background-color: #82beff;
+}
+
+.light-square {
+  height: 60px;
+  width: 60px;
+  display: inline-block;
+  background-color: lightgrey;
+}
+
+.piece {
+  height: 60px;
+  width: 60px;
+  display: block;
+  cursor: grab;
+}
+
+button {
+  width: 100px;
+  height: 20px;
+  margin: 20px;
+}
