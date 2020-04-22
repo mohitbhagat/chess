@@ -8,8 +8,8 @@ class Game {
     }
 
     sendBoardToClient(event) {
-        console.log('Sending Board to Client');
-        console.log(event);
+        //console.log('Sending Board to Client');
+        //console.log(event);
         this.socket.emit(event, this.board);
     }
 
@@ -23,15 +23,14 @@ class Game {
     }
 
     makeMove(startingCoordinate, endingCoordinate) {
-        console.log('coordinates');
-        console.log(startingCoordinate);
-        console.log(endingCoordinate);
         if(this.isValidMove(startingCoordinate, endingCoordinate)){
+            let savedBoard = this.board.saveBoard();
             this.board.makeMove(startingCoordinate, endingCoordinate);
-            this.board.isInCheck(turn);
-            this.turn = (this.turn === 'w') ? 'b' : 'w';
-            console.log('move validation');
-            console.log(this.board);
+            if(this.board.isInCheck(this.turn)) {
+                this.board.restoreBoard(savedBoard);
+            } else {
+                this.turn = (this.turn === 'w') ? 'b' : 'w';
+            }
         }
         this.sendBoardToClient('move');
     }

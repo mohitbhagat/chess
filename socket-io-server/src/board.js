@@ -10,6 +10,27 @@ class Board {
         this.theBoard[coordinate.down][coordinate.right] = piece;
     }
 
+    saveBoard() {
+        let savedBoard = Array(8).fill(null);
+        for(let i = 0; i < 8; i++) {
+            savedBoard[i] = Array(8).fill(null);
+        }
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                savedBoard[i][j] = this.theBoard[i][j];
+            }
+        }
+        return savedBoard;
+    }
+
+    restoreBoard(savedBoard) {
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                this.theBoard[i][j] = savedBoard[i][j];
+            }
+        }
+    }
+
     pieceAt(coordinate) {
         return this.theBoard[coordinate.down][coordinate.right];
     }
@@ -37,7 +58,7 @@ class Board {
         this._setCoordinate({down: 0, right: 1}, 'Nb');
         //this._setCoordinate({down: 0, right: 2}, 'Bb');
         this._setCoordinate({down: 0, right: 3}, 'Qb');
-        //this._setCoordinate({down: 0, right: 4}, 'Kb');
+        this._setCoordinate({down: 0, right: 4}, 'Kb');
         this._setCoordinate({down: 0, right: 5}, 'Bb');
         //this._setCoordinate({down: 0, right: 6}, 'Nb');
         this._setCoordinate({down: 0, right: 7}, 'Rb');
@@ -66,7 +87,7 @@ class Board {
     }
 
     _basicMoveChecks(startCoor, endCoor, turn) {
-        console.log('Basic move check');
+        //console.log('Basic move check');
         if(startCoor.down === endCoor.down && startCoor.right === endCoor.right) { return false; }
         if(turn != this._pieceColour(startCoor)){return false;}
         if(this.pieceAt(endCoor) != null){
@@ -78,24 +99,63 @@ class Board {
     }
 
     isInCheck(pieceColour) {
+        let checkCount = this._checkCount(pieceColour);
+        if(checkCount > 0) { return true;}
+        return false;
+    }
+
+    _checkCount(pieceColour) {
+        let checkCount = 0;
         let curCoor;
-        let kingCoor = (pieceColour == 'w') ? this._getKingPosn('b') : this._getKingPosn('w');
+        let opponentColour = (pieceColour === 'w') ? 'b' : 'w';
+        let kingCoor = this._getKingCoor(pieceColour);
         for(let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
                 curCoor = {down: i, right: j};
-                if(this.isValidMove(curCoor, kingCoor, pieceColour)){
-                    console.log(pieceColour + " is in check");
-                    return true;
+                if(this.isValidMove(curCoor, kingCoor, opponentColour)){
+                    checkCount += 1;
                 }
             }
         }
-        console.log(pieceColour + " is not in check");
-        return false;
+        return checkCount;
+    }
+
+    isInCheckMate(pieceColour) {
+        let checkCount = this._checkCount(pieceColour);
+        if(checkCount === 1) {
+            return this._handleSingleCheckMate(pieceColour);
+        } else if (checkCount > 1) {
+            return this._handleDoubleCheckMate(pieceColour);
+        } else {
+            return false;
+        }
+    }
+
+    _handleDoubleCheckMate(pieceColour) {
+        let savedBoard;
+        let isNotCheckMate;
+        let kingCoor = this._getKingCoor(pieceColour);
+        let validMoves = [
+            {down: kingCoor.down + 1, right: kingCoor.right + 1}, {down: kingCoor.down + 1, right: kingCoor.right},
+            {down: kingCoor.down + 1, right: kingCoor.right - 1}, {down: kingCoor.down + 0, right: kingCoor.right + 1},
+            {down: kingCoor.down + 0, right: kingCoor.right - 1}, {down: kingCoor.down - 1, right: kingCoor.right + 1},
+            {down: kingCoor.down - 1, right: kingCoor.right}, {down: kingCoor.down - 1, right: kingCoor.right - 1},
+        ]
+        validMoves = validMoves.filter(_isValidCoordinate);
+        for(let i = 0; i < validMoves.length; i++) {
+            if(this.isValidMove(kingCoor, validMoves[i], pieceColour)) {
+                this.makeMove(kingCoor, validMoves[i]);
+                savedBoard = this.saveBoard();
+                if(!this.isInCheck(pieceColour)) {
+                    isNotCheckMate = true;
+                }
+            }
+        }
     }
 
     isValidMove(startCoor, endCoor, turn){
         if(!this._basicMoveChecks(startCoor, endCoor, turn)){
-            console.log('Failed basics');
+            //console.log('Failed basics');
             return false;
         }
         let pieceType = this._pieceType(startCoor);
@@ -175,10 +235,10 @@ class Board {
         validMoves.push({down: startCoor.down - 1, right: startCoor.right + 2});
         validMoves.push({down: startCoor.down - 2, right: startCoor.right - 1});
         validMoves.push({down: startCoor.down - 1, right: startCoor.right - 2});
-        console.log('Valid Moves Length');
-        console.log(validMoves.length);
+        //console.log('Valid Moves Length');
+        //console.log(validMoves.length);
         validMoves = validMoves.filter(_isValidCoordinate);
-        console.log(validMoves);
+        //console.log(validMoves);
         for(let i = 0; i < validMoves.length; i++) {
             let curCoor = validMoves[i];
             if(curCoor.down === endCoor.down && curCoor.right === endCoor.right) { return true; }
@@ -277,7 +337,7 @@ class Board {
         return (this.pieceAt(coordinate) === null) ? true : false;
     }
 
-    _getKingPosn(colour) {
+    _getKingCoor(colour) {
         let curCoor;
         let curPiece;
         for(let i = 0; i < 8; i++) {

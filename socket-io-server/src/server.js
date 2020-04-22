@@ -31,7 +31,7 @@ io.on("connection", socket => {
         game.initGame();
     })
     socket.on('move', data => {
-        console.log(data);
+        //console.log(data);
         game.makeMove(data.startingCoordinate, data.endingCoordinate);
     });
     //socket.emit("init", "This is the server resonse");
