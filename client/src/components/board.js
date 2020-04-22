@@ -13,26 +13,19 @@ export default class Board extends React.Component {
     }
 
     componentDidMount() {
+        console.log('Mounting');
         this.state.socket = socketIOClient(this.state.endpoint);
-        this.state.socket.on("init", data => {
-            if(data != null){
-                this.setState({theBoard: data.theBoard});
-            }
-        })
     }
 
-    copyBoard = (board) => {
-        if(board === null) { return null; }
-        let newBoard = Array(8).fill(null);
-        for(let i = 0; i < 8; i++){
-            newBoard[i] = Array(8).fill(null)
-        }
-        for(let i = 0; i < 8; i++) {
-            for(let j = 0; j < 8; j++) {
-                newBoard[i][j] =  JSON.parse(JSON.stringify(board[i][j]));
+    initGame = () => {
+        this.state.socket.emit('init');
+        this.state.socket.on('init', data => {
+            console.log('Connected');
+            console.log(data);
+            if(data != null){
+                this.setState({theBoard: convertBoard(data.theBoard)});
             }
-        }
-        return newBoard;
+        });
     }
 
     handlePieceDrop = (data) => {
@@ -51,12 +44,35 @@ export default class Board extends React.Component {
         console.log('Drag Started')
     }
 
-    initGame = () => {
-        let board = this.copyBoard(this.state.theBoard);
-        board[3][4].contains = 'Qb';
-        this.setState({
-            theBoard: board
-        });
+    movePiece = (startCoor, endCoor) => {
+        if(startCoor.down === endCoor.down && startCoor.right === endCoor.right){
+            return;
+        }
+        //console.log(startCoor);
+        //console.log(endCoor);
+        //console.log(this.state.theBoard[startCoor.down][startCoor.right]);
+        //console.log(this.state.theBoard[endCoor.down][endCoor.right]);
+        //let board = copyBoard(this.state.theBoard);
+        //board[endCoor.down][endCoor.right].contains = board[startCoor.down][startCoor.right].contains;
+        //board[startCoor.down][startCoor.right].contains = null;
+        //this.setState({
+        //    theBoard: board
+        //});
+        //console.log(this.state.theBoard[startCoor.down][startCoor.right]);
+        //console.log(this.state.theBoard[endCoor.down][endCoor.right]);
+        let data = {
+            startingCoordinate: startCoor,
+            endingCoordinate: endCoor
+        }
+        this.state.socket.emit('move', data)
+        this.state.socket.on('move', data => {
+            if(data != null){
+                console.log('Move event');
+                console.log(data.theBoard);
+                this.setState({theBoard: convertBoard(data.theBoard)});
+                console.log(this.state.theBoard);
+            }
+        })
     }
 
     render() {
@@ -82,4 +98,37 @@ export default class Board extends React.Component {
             </div>
         );
     }
+};
+
+function convertBoard(board) {
+    let newBoard = Array(8).fill(null);
+    for(let i = 0; i < 8; i++) {
+        newBoard[i] = Array(8).fill(null);
+    }
+    for(let i = 0; i < 8; i++) {
+        for(let j = 0; j < 8; j++) {
+            let squareColour = ((j+i) % 2 === 0) ? 'dark' : 'light';
+            let square = {
+                colour: squareColour,
+                contains: board[i][j],
+                coordinate: {down: i, right: j}
+            }
+            newBoard[i][j] = square;
+        }
+    }
+    return newBoard;
+}
+
+function copyBoard(board) {
+    if(board === null) { return null; }
+    let newBoard = Array(8).fill(null);
+    for(let i = 0; i < 8; i++){
+        newBoard[i] = Array(8).fill(null)
+    }
+    for(let i = 0; i < 8; i++) {
+        for(let j = 0; j < 8; j++) {
+            newBoard[i][j] =  JSON.parse(JSON.stringify(board[i][j]));
+        }
+    }
+    return newBoard;
 }

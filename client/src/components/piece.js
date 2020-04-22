@@ -17,10 +17,8 @@ export default class Piece extends React.Component {
         super(props);
 
         this.state = {
-            pieceType: this.props.pieceType,
             curCoordinate: this.props.curCoordinate
         }
-        console.log('Piece Constructued');
     }
 
     handlePieceDragStart = (e) => {
@@ -31,12 +29,12 @@ export default class Piece extends React.Component {
     }
 
     render() {
-        if(this.state.pieceType === null){
+        if(this.props.pieceType === null){
             return null;
         }
 
         let pieceImage;
-        switch(this.state.pieceType) {
+        switch(this.props.pieceType) {
             case 'Pw':
                 pieceImage = Pw;
                 break;
