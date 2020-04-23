@@ -99,6 +99,8 @@ class Board {
     }
 
     isInCheck(pieceColour) {
+        let validPawnMoves = this._getValidPawnMoves({down: 6, right: 4});
+        console.log(validPawnMoves);
         let checkCount = this._checkCount(pieceColour);
         if(checkCount > 0) { return true;}
         return false;
@@ -131,6 +133,11 @@ class Board {
         }
     }
 
+    _handleSingleCheckMate(pieceColour) {
+        let savedBoard;
+        let is 
+    }
+
     _handleDoubleCheckMate(pieceColour) {
         let savedBoard;
         let isNotCheckMate;
@@ -151,6 +158,175 @@ class Board {
                 }
             }
         }
+    }
+
+    _getValidPawnMoves(startCoor) {
+        let validMoves = [];
+        let pawnColour = this._pieceColour(startCoor);
+        let potentialMoves = [];
+        if(pawnColour === 'w') {
+            potentialMoves = [
+                {down: startCoor.down-1, right: startCoor.right}, {down: startCoor.down-1, right: startCoor.right-1},
+                {down: startCoor.down-1, right: startCoor.right+1}, {down: startCoor.down-2, right: startCoor.right}];
+        } else {
+            potentialMoves = [
+                {down: startCoor.down+1, right: startCoor.right}, {down: startCoor.down+1, right: startCoor.right-1},
+                {down: startCoor.down+1, right: startCoor.right+1}, {down: startCoor.down+2, right: startCoor.right}];
+        }
+        validMoves = validMoves.concat(potentialMoves);
+        validMoves = validMoves.filter((curCoor) => {return this.isValidMove(startCoor, curCoor, pawnColour)});
+        console.log('Valid Pawn Moves');
+        console.log(validMoves);
+        return validMoves;
+    }
+
+    _getValidKingMoves(startCoor) {
+        let validMoves = [];
+        let pieceColour = this._pieceColour(startCoor);
+        validMoves = [
+            {down: startCoor.down+1, right: startCoor.right+1}, {down: startCoor.down+1, right: startCoor.right},
+            {down: startCoor.down+1, right: startCoor.right-1}, {down: startCoor.down, right: startCoor.right+1},
+            {down: startCoor.down, right: startCoor.right-1}, {down: startCoor.down-1, right: startCoor.right},
+            {down: startCoor.down-1, right: startCoor.right+1}, {down: startCoor.down-1, right: startCoor.right-1}
+        ];
+        validMoves = validMoves.filter((curCoor) => {return this.isValidMove(startCoor, curCoor, pieceColour)});
+        return validMoves;        
+    }
+
+    _getValidQueenMoves(startCoor) {
+        let dests = this._getLateralDests(startCoor);
+        dests = dests.concat(this._getDiagonalDests(startCoor));
+        return dests;
+    }
+
+    _getValidRookMoves(startCoor) {
+        return this._getLateralDests(startCoor);
+    }
+
+    _getValidBishopMoves(startCoor) {
+        return this._getLateralDests(startCoor);
+    }
+
+    _getValidKnightMoves(startCoor) {
+        let validMoves = [];
+        validMoves.push({down: startCoor.down + 2, right: startCoor.right + 1});
+        validMoves.push({down: startCoor.down + 1, right: startCoor.right + 2});
+        validMoves.push({down: startCoor.down + 2, right: startCoor.right - 1});
+        validMoves.push({down: startCoor.down + 1, right: startCoor.right - 2});
+        validMoves.push({down: startCoor.down - 2, right: startCoor.right + 1});
+        validMoves.push({down: startCoor.down - 1, right: startCoor.right + 2});
+        validMoves.push({down: startCoor.down - 2, right: startCoor.right - 1});
+        validMoves.push({down: startCoor.down - 1, right: startCoor.right - 2});
+        validMoves = validMoves.filter(_isValidCoordinate);
+        return validMoves;
+    }
+
+    _getLateralDests(startCoor) {
+        let pieceColour = this._pieceColour(startCoor);
+        let lateralDests = [];
+        let curCoor = startCoor;
+        while(true) {
+            curCoor = {down: curCoor.down-1, right: curCoor.right};
+            if(this.pieceAt(curCoor) != null) {
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    lateralDests.push(curCoor);
+                }
+                break;
+            } else {
+                lateralDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true){
+            curCoor = {down: curCoor.down+1, right:curCoor.right};
+            if(this.pieceAt(curCoor) != null){
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    lateralDests.push(curCoor);
+                }
+                break;
+            } else {
+                lateralDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true){
+            curCoor = {down: curCoor.down, right:curCoor.right+1};
+            if(this.pieceAt(curCoor) != null){
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    lateralDests.push(curCoor);
+                }
+                break;
+            } else {
+                lateralDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true){
+            curCoor = {down: curCoor.down, right:curCoor.right-1};
+            if(this.pieceAt(curCoor) != null){
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    lateralDests.push(curCoor);
+                }
+                break;
+            } else {
+                lateralDests.push(curCoor);
+            }
+        }
+        return lateralDests;
+    }
+
+    _getDiagonalDests(startCoor) {
+        let pieceColour = this._pieceColour(startCoor);
+        let diagonalDests = [];
+        let curCoor = startCoor;
+        while(true) {
+            curCoor = {down: curCoor.down-1, right: curCoor.right-1};
+            if(this.pieceAt(curCoor) != null) {
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    diagonalDests.push(curCoor);
+                }
+                break;
+            } else {
+                diagonalDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true) {
+            curCoor = {down: curCoor.down-1, right: curCoor.right+1};
+            if(this.pieceAt(curCoor) != null) {
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    diagonalDests.push(curCoor);
+                }
+                break;
+            } else {
+                diagonalDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true) {
+            curCoor = {down: curCoor.down+1, right: curCoor.right-1};
+            if(this.pieceAt(curCoor) != null) {
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    diagonalDests.push(curCoor);
+                }
+                break;
+            } else {
+                diagonalDests.push(curCoor);
+            }
+        }
+        curCoor = startCoor;
+        while(true) {
+            curCoor = {down: curCoor.down+1, right: curCoor.right+1};
+            if(this.pieceAt(curCoor) != null) {
+                if(this._pieceColour(curCoor) != pieceColour) {
+                    diagonalDests.push(curCoor);
+                }
+                break;
+            } else {
+                diagonalDests.push(curCoor);
+            }
+        }
+        return diagonalDests;
     }
 
     isValidMove(startCoor, endCoor, turn){
@@ -295,7 +471,6 @@ class Board {
         }
         return false;
     }
-
     _isClearDiagonalPath(startCoor, endCoor) {
         if(!this._coorsAreDiagonal(startCoor, endCoor)) {return false;}
         let dist = _abs(startCoor.down - endCoor.down) - 1;
