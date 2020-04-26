@@ -32,7 +32,11 @@ class Board {
     }
 
     pieceAt(coordinate) {
-        return this.theBoard[coordinate.down][coordinate.right];
+        if(this != null && this.theBoard != null && coordinate != null && this.theBoard[coordinate.down] != null){
+            return this.theBoard[coordinate.down][coordinate.right];
+        } else {
+            return null;
+        }
     }
 
     initStandardGame() {
