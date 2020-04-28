@@ -7,6 +7,10 @@ class Board {
     }
 
     _setCoordinate(coordinate, piece) {
+        if(!_isValidCoordinate(coordinate)){
+            console.log('Tried to set piece at invalid coordinate');
+            return;
+        }
         this.theBoard[coordinate.down][coordinate.right] = piece;
     }
 
@@ -32,11 +36,11 @@ class Board {
     }
 
     pieceAt(coordinate) {
-        if(this != null && this.theBoard != null && coordinate != null && this.theBoard[coordinate.down] != null){
-            return this.theBoard[coordinate.down][coordinate.right];
-        } else {
+        if(!_isValidCoordinate(coordinate)){
+            console.log('Tried to get piece at invalid coordiante');
             return null;
         }
+        return this.theBoard[coordinate.down][coordinate.right];
     }
 
     initStandardGame() {
@@ -103,8 +107,6 @@ class Board {
     }
 
     isInCheck(pieceColour) {
-        let validPawnMoves = this._getValidPawnMoves({down: 6, right: 4});
-        console.log(validPawnMoves);
         let checkCount = this._checkCount(pieceColour);
         if(checkCount > 0) { return true;}
         return false;
@@ -126,20 +128,47 @@ class Board {
         return checkCount;
     }
 
-    isInCheckMate(pieceColour) {
-        let checkCount = this._checkCount(pieceColour);
+    //Assumes king is in check
+    isInCheckMate(kingColour) {
+        let checkCount = this._checkCount(kingColour);
         if(checkCount === 1) {
-            return this._handleSingleCheckMate(pieceColour);
+            return this._handleSingleCheckMate(kingColour);
         } else if (checkCount > 1) {
-            return this._handleDoubleCheckMate(pieceColour);
+            return this._handleDoubleCheckMate(kingColour);
         } else {
             return false;
         }
     }
 
-    _handleSingleCheckMate(pieceColour) {
+    _handleSingleCheckMate(kingColour) {
         let savedBoard;
-        let is 
+        let isNotCheckMate;
+        let kingCoor = this._getKingCoor(kingColour); 
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                let curCoor = {down: i, right: j};
+                let curPiece = this.pieceAt(curCoor);
+                let curColour = this._pieceColour(curCoor);
+                let curPieceType = this._pieceType(curCoor);
+                if(curColour === kingColour) {
+                    let validMoves = this._getValidMoves(curCoor);
+                    for(let k = 0; k < validMoves.length; k++) {
+                        savedBoard = this.saveBoard();
+                        console.log('Making Move');
+                        console.log(curCoor);
+                        console.log(validMoves[k]);
+                        this.makeMove(curCoor, validMoves[k]);
+                        console.log(this.theBoard);
+                        if(!this.isInCheck(kingColour)){
+                            this.restoreBoard(savedBoard);
+                            return false;
+                        }
+                        this.restoreBoard(savedBoard);
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     _handleDoubleCheckMate(pieceColour) {
@@ -161,6 +190,24 @@ class Board {
                     isNotCheckMate = true;
                 }
             }
+        }
+    }
+
+    _getValidMoves(startCoor) {
+        let pieceType = this._pieceType(startCoor);
+        switch(pieceType) {
+            case 'P':
+                return this._getValidPawnMoves(startCoor);
+            case 'N':
+                return this._getValidKnightMoves(startCoor);
+            case 'K':
+                return this._getValidKingMoves(startCoor);
+            case 'Q':
+                return this._getValidQueenMoves(startCoor);
+            case 'R':
+                return this._getValidRookMoves(startCoor);
+            case 'B':
+                return this._getValidBishopMoves(startCoor);
         }
     }
 
@@ -231,6 +278,7 @@ class Board {
         let curCoor = startCoor;
         while(true) {
             curCoor = {down: curCoor.down-1, right: curCoor.right};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null) {
                 if(this._pieceColour(curCoor) != pieceColour) {
                     lateralDests.push(curCoor);
@@ -243,6 +291,7 @@ class Board {
         curCoor = startCoor;
         while(true){
             curCoor = {down: curCoor.down+1, right:curCoor.right};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null){
                 if(this._pieceColour(curCoor) != pieceColour) {
                     lateralDests.push(curCoor);
@@ -255,6 +304,7 @@ class Board {
         curCoor = startCoor;
         while(true){
             curCoor = {down: curCoor.down, right:curCoor.right+1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null){
                 if(this._pieceColour(curCoor) != pieceColour) {
                     lateralDests.push(curCoor);
@@ -267,6 +317,7 @@ class Board {
         curCoor = startCoor;
         while(true){
             curCoor = {down: curCoor.down, right:curCoor.right-1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null){
                 if(this._pieceColour(curCoor) != pieceColour) {
                     lateralDests.push(curCoor);
@@ -285,6 +336,7 @@ class Board {
         let curCoor = startCoor;
         while(true) {
             curCoor = {down: curCoor.down-1, right: curCoor.right-1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null) {
                 if(this._pieceColour(curCoor) != pieceColour) {
                     diagonalDests.push(curCoor);
@@ -297,6 +349,7 @@ class Board {
         curCoor = startCoor;
         while(true) {
             curCoor = {down: curCoor.down-1, right: curCoor.right+1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null) {
                 if(this._pieceColour(curCoor) != pieceColour) {
                     diagonalDests.push(curCoor);
@@ -309,6 +362,7 @@ class Board {
         curCoor = startCoor;
         while(true) {
             curCoor = {down: curCoor.down+1, right: curCoor.right-1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null) {
                 if(this._pieceColour(curCoor) != pieceColour) {
                     diagonalDests.push(curCoor);
@@ -321,6 +375,7 @@ class Board {
         curCoor = startCoor;
         while(true) {
             curCoor = {down: curCoor.down+1, right: curCoor.right+1};
+            if(!_isValidCoordinate(curCoor)) {break;}
             if(this.pieceAt(curCoor) != null) {
                 if(this._pieceColour(curCoor) != pieceColour) {
                     diagonalDests.push(curCoor);
