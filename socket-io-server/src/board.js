@@ -1,3 +1,5 @@
+const openings = require('./openings.js');
+
 class Board {
     constructor(){
         this.theBoard = Array(8).fill(null);
@@ -43,10 +45,17 @@ class Board {
         return this.theBoard[coordinate.down][coordinate.right];
     }
 
+    initGame(gameType) {
+        switch(gameType) {
+            case 'Standard':
+                this.theBoard = openings.STANDARD_GAME;
+        }
+    }
+
     initStandardGame() {
         //this._setCoordinate({down: 1, right: 0}, 'Pb');
         //this._setCoordinate({down: 1, right: 1}, 'Pb');
-        this._setCoordinate({down: 1, right: 2}, 'Pb');
+        //this._setCoordinate({down: 1, right: 2}, 'Pb');
         //this._setCoordinate({down: 1, right: 3}, 'Pb');
         //this._setCoordinate({down: 1, right: 4}, 'Pb');
         //this._setCoordinate({down: 1, right: 5}, 'Pb');
@@ -54,32 +63,33 @@ class Board {
         //this._setCoordinate({down: 1, right: 7}, 'Pb');
 
         //this._setCoordinate({down: 6, right: 0}, 'Pw');
-        this._setCoordinate({down: 6, right: 1}, 'Pw')
+        //this._setCoordinate({down: 6, right: 1}, 'Pw')
         //this._setCoordinate({down: 6, right: 2}, 'Pw');
         //this._setCoordinate({down: 6, right: 3}, 'Pw');
-        this._setCoordinate({down: 6, right: 4}, 'Pw');
+        //this._setCoordinate({down: 6, right: 4}, 'Pw');
         //this._setCoordinate({down: 6, right: 5}, 'Pw');
         //this._setCoordinate({down: 6, right: 6}, 'Pw');
         //this._setCoordinate({down: 6, right: 7}, 'Pw');
 
         //this._setCoordinate({down: 0, right: 0}, 'Rb');
-        this._setCoordinate({down: 0, right: 1}, 'Nb');
+        //this._setCoordinate({down: 0, right: 1}, 'Nb');
         //this._setCoordinate({down: 0, right: 2}, 'Bb');
-        this._setCoordinate({down: 0, right: 3}, 'Qb');
-        this._setCoordinate({down: 0, right: 4}, 'Kb');
-        this._setCoordinate({down: 0, right: 5}, 'Bb');
+        //this._setCoordinate({down: 0, right: 3}, 'Qb');
+        //this._setCoordinate({down: 0, right: 4}, 'Kb');
+        //this._setCoordinate({down: 0, right: 5}, 'Bb');
         //this._setCoordinate({down: 0, right: 6}, 'Nb');
-        this._setCoordinate({down: 0, right: 7}, 'Rb');
+        //this._setCoordinate({down: 0, right: 7}, 'Rb');
 
         //this._setCoordinate({down: 7, right: 0}, 'Rw');
         //this._setCoordinate({down: 7, right: 1}, 'Nw');
-        this._setCoordinate({down: 7, right: 2}, 'Bw');
-        this._setCoordinate({down: 7, right: 3}, 'Qw');
-        this._setCoordinate({down: 7, right: 4}, 'Kw');
+        //this._setCoordinate({down: 7, right: 2}, 'Bw');
+        //this._setCoordinate({down: 7, right: 3}, 'Qw');
+        //this._setCoordinate({down: 7, right: 4}, 'Kw');
         //this._setCoordinate({down: 7, right: 5}, 'Bw');
-        this._setCoordinate({down: 7, right: 6}, 'Nw');
+        //this._setCoordinate({down: 7, right: 6}, 'Nw');
         //this._setCoordinate({down: 7, right: 7}, 'Rw');
-        this._setCoordinate({down: 2, right: 1}, 'Rb');
+        //this._setCoordinate({down: 2, right: 1}, 'Rb');
+        this.initGame('Standard');
     }
 
     _pieceType(coordinate) {

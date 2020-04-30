@@ -31,9 +31,9 @@ class Game {
             } else {
                 this.turn = (this.turn === 'w') ? 'b' : 'w';
                 if(this.board.isInCheck(this.turn)){
-                    //let isCheckMate = this.board.isInCheckMate(this.turn);
+                    let isCheckMate = this.board.isInCheckMate(this.turn);
                     console.log('Is ' + this.turn + ' in check mate?');
-                    //console.log(isCheckMate);
+                    console.log(isCheckMate);
                 }
             }
         }
