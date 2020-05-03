@@ -15,6 +15,10 @@ export default class Board extends React.Component {
     componentDidMount() {
         console.log('Mounting');
         this.state.socket = socketIOClient(this.state.endpoint);
+        console.log('Socket should be connected');
+        console.log(this.state.socket);
+        console.log('The Port');
+        console.log(process.env.PORT);
     }
 
     initGame = () => {
