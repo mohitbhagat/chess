@@ -7,7 +7,7 @@ export default class Board extends React.Component {
         super(props);
         this.state = {
             theBoard: null,
-            endpoint: "http://127.0.0.1:8000",
+            endpoint: "http://127.0.0.1:8080",
             socket: null
         };
     }
