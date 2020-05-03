@@ -7,7 +7,7 @@ export default class Board extends React.Component {
         super(props);
         this.state = {
             theBoard: null,
-            endpoint: "http://127.0.0.1:8080",
+            endpoint: "https://quiet-beach-58157.herokuapp.com/",
             socket: null
         };
     }
@@ -17,8 +17,6 @@ export default class Board extends React.Component {
         this.state.socket = socketIOClient(this.state.endpoint);
         console.log('Socket should be connected');
         console.log(this.state.socket);
-        console.log('The Port');
-        console.log(process.env.PORT);
     }
 
     initGame = () => {
