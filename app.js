@@ -4,7 +4,7 @@ const Game = require('./game.js');
 const path = require('path');
 const socketIo = require('socket.io');
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 let app = express();
 app.use(express.static(path.join(__dirname, 'build')));
