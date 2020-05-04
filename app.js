@@ -18,7 +18,7 @@ server.listen(port, () => {
 });
 
 let io = socketIo(server);
-
+io.set('origins', '*:*');
 io.on("connection", socket => {
     console.log("New client connected");
     let game = new Game.Game(socket);
