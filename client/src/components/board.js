@@ -7,14 +7,14 @@ export default class Board extends React.Component {
         super(props);
         this.state = {
             theBoard: null,
-            endpoint: "https://quiet-beach-58157.herokuapp.com/",
+            endpoint: "https://quiet-beach-58157.herokuapp.com:8080",
             socket: null
         };
     }
 
     componentDidMount() {
         console.log('Mounting');
-        this.state.socket = socketIOClient();
+        this.state.socket = socketIOClient(this.state.endpoint);
         console.log('Socket should be connected');
         console.log(this.state.socket);
     }
