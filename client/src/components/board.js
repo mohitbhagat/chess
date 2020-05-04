@@ -7,7 +7,7 @@ export default class Board extends React.Component {
         super(props);
         this.state = {
             theBoard: null,
-            endpoint: "https://quiet-beach-58157.herokuapp.com:8080",
+            endpoint: "https://quiet-beach-58157.herokuapp.com",
             socket: null
         };
     }
