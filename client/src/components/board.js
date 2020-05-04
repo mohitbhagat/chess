@@ -14,7 +14,7 @@ export default class Board extends React.Component {
 
     componentDidMount() {
         console.log('Mounting');
-        this.state.socket = socketIOClient(this.state.endpoint);
+        this.state.socket = socketIOClient();
         console.log('Socket should be connected');
         console.log(this.state.socket);
     }
