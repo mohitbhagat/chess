@@ -1,24 +1,18 @@
+'use strict';
+
 const express = require('express');
-const http = require('http');
 const Game = require('./game.js');
 const path = require('path');
 const socketIo = require('socket.io');
 
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 
-let app = express();
-app.use(express.static(path.join(__dirname, 'build')));
+const server = express()
+    .use(express.static(path.join(__dirname, 'build')))
+    .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-app.get('/*', (req, res) => { res.sendfile(path.join(__dirname, 'build', 'index.html'));});
+const io = socketIo(server);
 
-let server = http.createServer(app);
-
-server.listen(port, () => {
-    console.log('listening on ' + port);
-});
-
-let io = socketIo(server);
-io.set('origins', '*:*');
 io.on("connection", socket => {
     console.log("New client connected");
     let game = new Game.Game(socket);
@@ -32,5 +26,3 @@ io.on("connection", socket => {
         console.log("Client disconnected");
     });
 });
-
-module.exports = app;
