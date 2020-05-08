@@ -8,6 +8,7 @@ export default class Board extends React.Component {
         this.state = {
             theBoard: null,
             endpoint: "https://quiet-beach-58157.herokuapp.com",
+            message: null,
             socket: null
         };
     }
@@ -20,12 +21,20 @@ export default class Board extends React.Component {
     }
 
     initGame = () => {
+        this.setState({theBoard: null});
+        this.forceUpdate(); 
         this.state.socket.emit('init');
         this.state.socket.on('init', data => {
-            console.log('Connected');
-            console.log(data);
             if(data != null){
-                this.setState({theBoard: convertBoard(data.theBoard)});
+                if(data.matchType === "Online"){
+                    this.setState({
+                        theBoard: convertBoard(data.theBoard),
+                        message: null});
+                } else if(data.matchType === "OTB"){
+                    this.setState({
+                        theBoard: convertBoard(data.theBoard),
+                        message: "No open matches. Playing over the board."});
+                }
             }
         });
     }
@@ -95,8 +104,13 @@ export default class Board extends React.Component {
             ))
         return (
             <div>
-                {squares}
-                <button onClick={this.initGame}>Init game</button>
+                <div className="board-container">
+                    <div className="board-message">
+                        {this.state.message}
+                    </div>
+                    {squares}
+                </div>
+                <button className="start-game-button" onClick={this.initGame}>New Game</button>
             </div>
         );
     }

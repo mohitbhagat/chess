@@ -11,7 +11,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/socket-io-server/src/server.js",
+            "program": "${workspaceFolder}/app.js",
+            "useWSL": true
         }
     ]
 }

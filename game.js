@@ -10,7 +10,11 @@ class Game {
     sendBoardToClient(event) {
         //console.log('Sending Board to Client');
         //console.log(event);
-        this.socket.emit(event, this.board);
+        let data = {
+            matchType: "OTB",
+            theBoard: this.board.theBoard
+        };
+        this.socket.emit(event, data);
     }
 
     initGame() {

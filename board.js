@@ -105,7 +105,7 @@ class Board {
     }
 
     _basicMoveChecks(startCoor, endCoor, turn) {
-        //console.log('Basic move check');
+        if(!_isValidCoordinate(startCoor) || !_isValidCoordinate(endCoor)) { return false; }
         if(startCoor.down === endCoor.down && startCoor.right === endCoor.right) { return false; }
         if(turn != this._pieceColour(startCoor)){return false;}
         if(this.pieceAt(endCoor) != null){
@@ -603,6 +603,7 @@ function _abs(value) {
 }
 
 function _isValidCoordinate(coordinate) {
+    if(coordinate === null) {return false;}
     if(coordinate.down < 0 || coordinate.down > 7){
         return false;
     }

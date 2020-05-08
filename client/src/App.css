@@ -10,6 +10,17 @@
   margin-bottom: -5px;
 }
 
+.board-container {
+  padding: 50px;
+}
+
+.board-message {
+  color: white;
+  font-size: 15px;
+  font-weight: 400;
+  margin: 25px;
+}
+
 .dark-square {
   height: 60px;
   width: 60px;
@@ -29,6 +40,26 @@
   width: 60px;
   display: block;
   cursor: grab;
+}
+
+.start-game-button {
+	background-color: grey;
+	border-radius:28px;
+	border:1px solid darkgrey;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-size:13px;
+	/*padding:16px 31px;*/
+	text-decoration:none;
+}
+
+.start-game-button:hover {
+	background-color: lightgray;
+}
+.start-game-button:active {
+	position:relative;
+	top:1px;
 }
 
 button {
