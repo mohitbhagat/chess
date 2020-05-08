@@ -19,6 +19,9 @@ io.on("connection", socket => {
     socket.on('init', () => {
         game.initGame();
     })
+    socket.on('onlineCount', () => {
+        game.onlineCount();
+    })
     socket.on('move', data => {
         game.makeMove(data.startingCoordinate, data.endingCoordinate);
     });

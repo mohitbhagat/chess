@@ -17,6 +17,13 @@ class Game {
         this.socket.emit(event, data);
     }
 
+    onlineCount() {
+        let data = {
+            onlineCount: 0,
+        };
+        this.socket.emit('onlineCount', data);
+    }
+
     initGame() {
         this.board.initStandardGame();
         this.sendBoardToClient('init');

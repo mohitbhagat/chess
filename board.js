@@ -48,7 +48,15 @@ class Board {
     initGame(gameType) {
         switch(gameType) {
             case 'Standard':
-                this.theBoard = openings.STANDARD_GAME;
+                if(this.theBoard === null){
+                    this.theBoard = openings.STANDARD_GAME.slice();
+                } else {
+                    for(let i = 0; i < 8; i++) {
+                        for(let j = 0; j < 8; j++) {
+                            this.theBoard[i][j] = openings.STANDARD_GAME[i][j];
+                        }
+                    }
+                }
         }
     }
 

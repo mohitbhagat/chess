@@ -16,6 +16,12 @@ export default class Board extends React.Component {
     componentDidMount() {
         console.log('Mounting');
         this.state.socket = socketIOClient();
+        this.state.socket.emit('onlineCount');
+        this.state.socket.on('onlineCount', data => {
+            this.setState({
+                message: data.onlineCount + " Players online"
+            })
+        });
         console.log('Socket should be connected');
         console.log(this.state.socket);
     }
@@ -33,7 +39,7 @@ export default class Board extends React.Component {
                 } else if(data.matchType === "OTB"){
                     this.setState({
                         theBoard: convertBoard(data.theBoard),
-                        message: "No open matches. Playing over the board."});
+                        message: "Playing over the board."});
                 }
             }
         });
